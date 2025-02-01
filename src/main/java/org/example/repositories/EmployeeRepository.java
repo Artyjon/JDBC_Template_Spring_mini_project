@@ -22,20 +22,21 @@ public class EmployeeRepository implements CrudRepository<Employee> {
 
 
     public int saveUsingUpdate(Employee e) {
-        String query = "insert into employee (id, name, salary) values ('%d','%s','%d')".formatted(e.getId(), e.getName(), e.getSalary());
+        String query = "insert into employee (id, name, occupation, salary, age, join_date) " +
+                       "values ('" + e.getId() + "', '" + e.getName() + "', '" + e.getOccupation() + "', '" + e.getSalary() + "', '" + e.getAge() + "', '" + e.getJoinDate() + "')";
         return jdbcTemplate.update(query);
 
     }
 
 
     public int updateUsingUpdate(Employee e) {
-        String query = "update employee set name = '%s', salary = '%d' where id = '%d'".formatted(e.getName(), e.getSalary(), e.getId());
+        String query = "update employee set name='" + e.getName() + "',salary='" + e.getSalary() + "' where id='" + e.getId() + "'";
         return jdbcTemplate.update(query);
     }
 
 
     public int deleteUsingUpdate(Employee e) {
-        String query = "delete from employee where id = '%d'".formatted(e.getId());
+        String query = "delete from employee where id='" + e.getId() + "'";
         return jdbcTemplate.update(query);
 
     }
