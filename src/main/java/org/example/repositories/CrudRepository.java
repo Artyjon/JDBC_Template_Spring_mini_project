@@ -1,6 +1,8 @@
 package org.example.repositories;
 
-public interface CrudRepository <T>{
+import java.util.List;
+
+public interface CrudRepository<T> {
 
     //public int update(String query);
 
@@ -18,5 +20,19 @@ public interface CrudRepository <T>{
     Integer updateByPreparedStatement(T t);
 
     Integer deleteByPreparedStatement(T t);
+
+    // public T query(String sql, ResultSetExtractor<T> rse)
+
+    T getFirstWithResultSetExtractor();
+
+    T findById(Long id);
+
+    List<T> findAll();
+
+// public int update(String sql, @Nullable Object... args);
+
+    int save(T t);
+
+    int deleteById(Long id);
 
 }

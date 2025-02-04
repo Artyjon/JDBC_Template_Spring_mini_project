@@ -1,10 +1,17 @@
 package org.example.repositories;
 
 import org.example.entity.Employee;
+import org.example.mappers.EmployeeResultSetExtractor;
 import org.example.repositories.statements.SaveEmployeePreparedStatementCallback;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCallback;
+import org.springframework.jdbc.core.ResultSetExtractor;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 import static org.example.repositories.queries.EmployeeQueries.*;
 
@@ -13,13 +20,17 @@ import static org.example.repositories.queries.EmployeeQueries.*;
 public class EmployeeRepository implements CrudRepository<Employee> {
 
     private final JdbcTemplate jdbcTemplate;
+    private final RowMapper<Employee> employeeRowMapper;
 
-    public EmployeeRepository(JdbcTemplate jdbcTemplate) {
+    private final ResultSetExtractor<Employee> employeeResultSetExtractor;
+
+    public EmployeeRepository(JdbcTemplate jdbcTemplate, ResultSetExtractor<Employee> employeeResultSetExtractor, RowMapper<Employee> employeeRowMapper) {
+        this.employeeRowMapper = employeeRowMapper;
         this.jdbcTemplate = jdbcTemplate;
+        this.employeeResultSetExtractor = employeeResultSetExtractor;
     }
 
     // public int update (String query)
-
 
     public int saveUsingUpdate(Employee e) {
         String query = "insert into employee (id, name, occupation, salary, age, join_date) " +
@@ -69,5 +80,46 @@ public class EmployeeRepository implements CrudRepository<Employee> {
     @Override
     public Integer deleteByPreparedStatement(Employee e) {
         return 0;
+    }
+
+    // public T query(String sql, ResultSetExtractor<T> rse)
+
+
+    @Override
+    public Employee getFirstWithResultSetExtractor() {
+        return jdbcTemplate.query(FIND_FIRST_EMPLOYEE, employeeResultSetExtractor);
+    }
+
+    //public List<T> query(String sql, RowMapper<T> rm)
+
+    @Override
+    public List<Employee> findAll() {
+        return jdbcTemplate.query(FIND_ALL_EMPLOYEES, employeeRowMapper);
+    }
+
+
+
+    @Override
+    public Employee findById(Long id) {
+        List<Employee> resultSet = jdbcTemplate.query(FIND_EMPLOYEE_BY_ID, employeeRowMapper, id);
+        return resultSet.get(0);
+    }
+
+    // public int update(String sql, @Nullable Object... args);
+
+    @Override
+    public int save(Employee employee) {
+        return jdbcTemplate.update(SAVE_EMPLOYEE,
+                employee.getId(),
+                employee.getName(),
+                employee.getOccupation(),
+                employee.getSalary(),
+                employee.getAge(),
+                employee.getJoinDate());
+    }
+
+    @Override
+    public int deleteById(Long id) {
+        return jdbcTemplate.update(DELETE_EMPLOYEE, id);
     }
 }

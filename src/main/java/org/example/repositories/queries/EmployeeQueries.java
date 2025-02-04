@@ -3,7 +3,7 @@ package org.example.repositories.queries;
 public class EmployeeQueries {
 
 
-    private EmployeeQueries () {
+    private EmployeeQueries() {
     }
 
     public static final String SAVE_EMPLOYEE = """
@@ -21,4 +21,22 @@ public class EmployeeQueries {
             DELETE FROM employee AS e
             WHERE e.id = ?
             """;
+
+    public static final String FIND_FIRST_EMPLOYEE = """
+            SELECT * 
+            FROM employee AS e
+            WHERE e.id = 1
+            """;
+
+    public static final String FIND_ALL_EMPLOYEES = """
+            SELECT * 
+            FROM employee AS e
+            """;
+
+    public static final String FIND_EMPLOYEE_BY_ID = """
+            SELECT * 
+            FROM employee AS e
+            WHERE e.id = ?
+            """;
+
 }
